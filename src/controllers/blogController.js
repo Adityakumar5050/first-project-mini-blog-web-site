@@ -2,77 +2,58 @@ const blogModel = require('../models/blogModel')
 const authorModel = require('../models/authorModel');
 const validator = require("../validator/validator");
 
-//*******************************************createBlog***************************************************************** */
+//**************createBlog********************** */
 const createBlog = async function (req, res) {
-        try {
-            let data = req.body
-            let { authorId, title, body, tags, category, subCategory } = data; // the data will come in this form  authorId, title, body, tags, category, subCategory 
-    
-            if (!validator.isValidBody(data)) {
-                //checking that body is empty or not
-                return res.status(400).send({ status: false, msg: "Body cannot be empty" });
-            }
-    
-            //edgeCase1 - 
-            if (!authorId)
-                return res.status(400).send({ statut: false, msg: "AuthorId is required" });
-    
-            // edgeCase2- 
-            if (!validator.isValidId(authorId))
-                return res.status(400).send({ status: false, message: "Invalid AuthoId" });
-    
-            //edgeCase3 - 
-            let authorPresence = await authorModel.findById(authorId);
-            if (!authorPresence)
-                return res.status(404).send({ status: false, msg: "Author is not present" });
-    
-            //edgeCase4 - is title present or not
-            if (!title)
-                return res.status(400).send({ status: false, msg: "Title is required" });
-    
-            //edgeCase5 - is body data present or not
-            if (!body)
-                return res.status(400).send({ status: false, msg: "Body content is a mandatory part" });
-            
-            if (body.length < 5)
-             //content should be more than 5 characters of the body in model 
-                return res.status(400).send({
-                    status: false,
-                    msg: "body content is too short...add some more content",
-                });
-            //edgeCase6 --tag is valid or not
-            if (tags) {
-                let verifyTags = validator.isValidName(tags);
-                if (!verifyTags) return res.status(400).send({ status: false, msg: " Tags is not valid" })
-            }
-    
-            //edgeCase7 - is body data present or not
-            if (!category || category.length == 0)
+    try {
+        let data = req.body
+        let { authorId, title, body, category, isPublished } = data;
 
-            //if category is missing or in case of category  is blank it shows  (Category is must)
-                return res.status(400).send({ statut: false, msg: "Category is must" });
-            if (category) {
-                let verifyCategory = validator.isValidName(category);
-                if (!verifyCategory) return res.status(400).send({ status: false, msg: " category is not valid" })
-            }
-    
-            // edgeCase8 --is sub category valid or not
-            if (subCategory) {
-                let subCategory1 = validator.isValidName(subCategory);
-                if (!subCategory1) return res.status(400).send({ status: false, msg: " sub category is not valid" })
-            }
-    
-            if (data.isPublished) data.publishedAt = new Date()   // date stamp that means is published true or false
-            if (data.isDeleted) data.deletedAt = new Date()         //// date stamp that means is deleted true or false
-    
-            let savedData = await blogModel.create(data);
-            res.status(201).send({ status: true, msg: savedData })
-    
-        } catch (err) {
-            res.status(500).send({ msg: err.message })
+        if (!validator.isValidBody(data)) {
+            //checking that body is empty or not
+            return res.status(400).send({ status: false, msg: "Body cannt be empty" });
         }
+
+        //edgeCase1 - 
+        if (!authorId)
+            return res.status(400).send({ statut: false, msg: "AuthorId is required" });
+
+        // edgeCase2- 
+        if (!validator.isValidId(authorId))
+            return res.status(400).send({ status: false, message: "Invalid AuthoId" });
+
+        //edgeCase3 - 
+        let authorPresence = await authorModel.findById(authorId);
+        if (!authorPresence)
+            return res.status(404).send({ status: false, msg: "Author is not present" });
+
+        //edgeCase4 - is title present or not
+        if (!title)
+            return res.status(400).send({ statut: false, msg: "Title is required" });
+
+        //edgeCase5 - is body data present or not
+        if (!body)
+            return res.status(400).send({ statut: false, msg: "Body content is a mandatory part" });
+        //content should be more than 100 characters
+        if (body.length < 5)
+            return res.status(400).send({
+                statut: false,
+                msg: "body content is too short...add some more content",
+            });
+
+        //edgeCase6 - is body data present or not
+        if (!category || category.length == 0)
+            return res.status(400).send({ statut: false, msg: "Category is must" });
+        if (data.isPublished) data.publishedAt = new Date()
+        if (data.isDeleted) data.deletedAt = new Date()
+
+        let savedData = await blogModel.create(data);
+        res.status(201).send({ status: true, msg: savedData })
+
+    } catch (err) {
+        res.status(500).send({ msg: err.message })
     }
-//*************************************************getBlog************************************************************* */
+}
+//****************getBlog******************** */
 
 const getBlog = async function (req, res) {
     try {
@@ -96,7 +77,7 @@ const getBlog = async function (req, res) {
     }
 }
 
-//*************************************************UpdateBlog****************************************************
+//****************UpdateBlog*****************
 
 
 const updateBlog = async function (req, res) {
@@ -143,7 +124,7 @@ const updateBlog = async function (req, res) {
     }
 };
 
-//*********************************************************DeleteBlogByParam****************************************************************/
+//********************DeleteBlogByParam*********************/
 
 const deleteBlog = async function (req, res) {
     try {
@@ -164,12 +145,12 @@ const deleteBlog = async function (req, res) {
             return res.status(404).send({ status: false, msg: "Blog not found may you have already delted :)", });
 
         let updatedata = await blogModel.findByIdAndUpdate(savedData, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true });
-        res.status(200).send();
+        res.status(200).send({msg: "blog is sucessfully deleted"});
     } catch (error) {
         res.status(500).send({ status: false, msg: error.message });
     }
 }
-//*******************************************************DeleteBlogByQuery********************************************************************/
+//******************DeleteBlogByQuery***********************/
 
 const deleteBlogByQuery = async function (req, res) {
     try {

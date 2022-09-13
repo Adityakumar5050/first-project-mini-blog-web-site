@@ -7,8 +7,9 @@ const isValidEmail = function (mail) {
 }
 
 const isValidPassword = function (password) {
-    if (/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,32}$/.test(password)) return true;
-  return false
+  if (/^(?=.[A-Z])(?=.[a-z])(?=.[0-9])(?=.[!@#$%^&])[a-zA-Z0-9!@#$%^&]{8,32}$/.test(password)) return true;
+return false
+
 
 }
 

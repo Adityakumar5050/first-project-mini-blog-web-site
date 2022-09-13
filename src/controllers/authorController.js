@@ -4,7 +4,7 @@ const validator = require('../validator/validator');
 
 
 
-//***********************************************CREATE AUTHOR****************************************************** */
+//****************CREATE AUTHOR******************* */
 
 const createAuthor = async function (req, res) {
     try {
@@ -49,11 +49,11 @@ const createAuthor = async function (req, res) {
               });
           }
       
-        //edge case-6
-        if (!password) { return res.status(400).send({ status: false, msg: "password is required" }) }
-            if(!validator.isValidPassword(password)) {
-                return res.status(400).send({status: false, msg: "password is not valid"})
-        }
+       //edge case-2
+       if (!password) { return res.status(400).send({ status: false, msg: "password must be  required" }) }
+       if(!validator.isValidPassword(password)) {
+           return res.status(400).send({status: false, msg: "password is not valid"})
+   }
 
         //edge case-7 
         let inputEmail = await authorModel.findOne({ email });
@@ -69,7 +69,7 @@ const createAuthor = async function (req, res) {
     }
 }
 
-//*********************************************************LOGIN USER*******************************************************
+//********************LOGIN USER******************
 
 
 const loginUser = async function (req, res) {

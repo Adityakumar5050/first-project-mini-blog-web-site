@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 
 
-//*********************************************AUTHENTICATION************************************************************************
+//****************AUTHENTICATION*************************
 
 const authentication = function (req, res, next) {
     try {
@@ -30,7 +30,7 @@ const authentication = function (req, res, next) {
     }
 
 
-//*********************************************AUTHORIZATION************************************************************************
+//****************AUTHORIZATION*************************
 
 const authorization = function (req, res, next) {
         try {
@@ -48,7 +48,7 @@ const authorization = function (req, res, next) {
     }
 
 
-
+//
 
     module.exports.authorization = authorization
     module.exports.authentication = authentication
